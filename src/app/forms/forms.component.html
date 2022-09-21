@@ -1,0 +1,74 @@
+<div class="wrap">
+    <form [formGroup]="pageForm" class="page-form">
+
+        <mat-form-field class="example-form-field">
+            <mat-label>Yor Name</mat-label>
+            <input matInput type="text" formControlName="userName">
+        </mat-form-field>
+
+        <mat-form-field class="example-form-field">
+            <mat-label>Your Last Name</mat-label>
+            <input matInput type="text" formControlName="userLastName">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Choose your date of birth</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Choose yours framework</mat-label>
+            <mat-select formControlName="selectFramework" required>
+              <mat-option *ngFor="let framework of frameworks" [value]="framework.value">
+                {{framework.value}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- *ngIf="this.versionFramework.length > 0" -->
+          <mat-form-field appearance="fill" >
+            <mat-label>Сhoose your framework version</mat-label>
+            <mat-select formControlName="selectVersion" required> 
+              <mat-option *ngFor="let itemVersion of this.versionFramework" [value]="itemVersion">
+                {{itemVersion}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Enter your email</mat-label>
+            <input matInput placeholder="pat@example.com" formControlName="email">
+            <!-- <mat-error *ngIf="email.invalid">You must enter a value</mat-error> -->
+            <mat-error *ngIf="pageForm.get('email')?.errors?.['required']">YoNot a valid email</mat-error>
+          </mat-form-field>
+
+          <div class="hobbies"> 
+            <p>Your hobbies</p>
+            <ul class="hobbies-inner" formArrayName="hobbies">
+              <li *ngFor="let item of hobbies.controls; let i = index" [formGroupName]="i" class="hobbies-li">
+                <!-- <input type="text" formControlName="hobbiesTitle"> -->
+                <!-- <input type="text" formControlName="hobbiesDuration"> -->
+                <mat-form-field class="example-form-field">
+                  <mat-label>Hobbies Title</mat-label>
+                  <input matInput type="text" formControlName="hobbiesTitle">
+                </mat-form-field>
+
+                <mat-form-field class="example-form-field">
+                  <mat-label>Hobbies Duration</mat-label>
+                  <input matInput type="text" formControlName="hobbiesDuration">
+                </mat-form-field>
+              </li>
+            </ul>
+
+            <button mat-raised-button color="primary"  class="hobbies-btn" (click)="addHobbies()">Add new hobbies</button>
+         
+          </div>
+
+          <button mat-raised-button color="primary" type="submit" (click)="sendForm()">Отправить</button>
+          
+    </form>
+
+</div>
