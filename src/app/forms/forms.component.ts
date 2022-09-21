@@ -1,9 +1,9 @@
+
 import { Component, OnInit } from '@angular/core';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 
-import {MatDatepickerInputEvent} from '@angular/material/datepicker';
-import { Subscription } from 'rxjs';
-
+import { Subscription, of, Observable, delay } from 'rxjs';
+import { map } from 'rxjs';
 
 interface Frameworks {
   value: string;
@@ -15,27 +15,38 @@ interface Frameworks {
   styleUrls: ['./forms.component.css'],
 })
 
-export class FormsComponent implements OnInit {
+export class FormsComponent {
 
-
-
+  setHobbies() {
+    return new FormGroup({
+        hobbiesTitle: new FormControl('', Validators.required),
+        hobbiesDuration: new FormControl('', Validators.required),
+      })
+  }
 
   pageForm: FormGroup = new FormGroup({
-    userName: new FormControl(''),
-    userLastName: new FormControl(''),
-    dateOfBirth: new FormControl(new Date()),
-    selectFramework: new FormControl(),
-    selectVersion: new FormControl(),
-    // hobbies: 
+    userName: new FormControl('', Validators.required),
+    userLastName: new FormControl('', Validators.required),
+    dateOfBirth: new FormControl(new Date(), Validators.required),
+    selectFramework: new FormControl('', Validators.required),
+    selectVersion: new FormControl('', Validators.required),
+    email:  new FormControl('', [Validators.required, Validators.email], this.validatorsEmail()),
+    hobbies: new FormArray([
+      this.setHobbies()
+    ]) 
   })
-
+  
+  addHobbies() {
+    this.hobbies.push(this.setHobbies());
+  }
 
   //Метод для получения значения с hobbies, пушо без него нот ворк - https://howtojs.io/how-to-solve-property-controls-does-not-exist-on-type-abstractcontrol-error-in-angular-13-applications/
   get hobbies() {
     return this.pageForm.controls['hobbies'] as FormArray
   }
 
-
+  emails = ['test@test.test'];
+    
   frameworks: Frameworks[] = [
     {value: 'Angular'},
     {value: 'React'},
@@ -56,35 +67,27 @@ export class FormsComponent implements OnInit {
     this.pageForm.get('selectFramework')?.valueChanges.subscribe((v) => {
       this.versionFramework = this.frameworkVersion[v];
     })
-
   }
 
   versionValue!: Subscription;
 
+  private mailExists(email: string): Observable<boolean> {
+    return of(this.emails.includes(this.pageForm.get('email')?.value)).pipe(delay(500))
+  }
+
+  private validatorsEmail():AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => 
+      this.mailExists(control.value).pipe(
+        map((response) => (response ? {mailExists: true} : null))
+      )
+  }
+
   sendForm() {
-    // this.pageForm.get('hobbiesName')?.valueChanges.subscribe((value) => {
-    //   console.log(value)
-    // })
-    // this.pageForm.valueChanges
-    // console.log(this.pageForm.valueChanges)
-  }
-
-  email = new FormControl('', [Validators.required, Validators.email]);
-
-  getErrorMessage() {
-    if (this.email.hasError('required')) {
-      return 'You must enter a value';
-    }
-
-    return this.email.hasError('email') ? 'Not a valid email' : '';
-  }
-
-  constructor() { }
-
-  ngOnInit(): void {
-    // this.pageForm.get('FormControl')?.valueChanges.subscribe((v) => {
-    //   console.log(v)
-    // })
+    console.log(this.pageForm.controls);
+    this.emails.push(this.pageForm.controls['email'].value);
+    console.log(this.emails);
   }
 
 }
+
+// Thank you for your attention

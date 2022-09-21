@@ -3,17 +3,17 @@
 
         <mat-form-field class="example-form-field">
             <mat-label>Yor Name</mat-label>
-            <input matInput type="text" formControlName="userName" required>
+            <input matInput type="text" formControlName="userName">
         </mat-form-field>
 
         <mat-form-field class="example-form-field">
             <mat-label>Your Last Name</mat-label>
-            <input matInput type="text" formControlName="userLastName" required>
+            <input matInput type="text" formControlName="userLastName">
         </mat-form-field>
 
         <mat-form-field>
             <mat-label>Choose your date of birth</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" required>
+            <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
             <mat-hint>MM/DD/YYYY</mat-hint>
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
@@ -28,7 +28,8 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="fill" *ngIf="this.versionFramework.length > 0">
+          <!-- *ngIf="this.versionFramework.length > 0" -->
+          <mat-form-field appearance="fill" >
             <mat-label>Сhoose your framework version</mat-label>
             <mat-select formControlName="selectVersion" required> 
               <mat-option *ngFor="let itemVersion of this.versionFramework" [value]="itemVersion">
@@ -39,52 +40,35 @@
 
           <mat-form-field>
             <mat-label>Enter your email</mat-label>
-            <input matInput placeholder="pat@example.com" [formControl]="email" required>
-            <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
+            <input matInput placeholder="pat@example.com" formControlName="email">
+            <!-- <mat-error *ngIf="email.invalid">You must enter a value</mat-error> -->
+            <mat-error *ngIf="pageForm.get('email')?.errors?.['required']">YoNot a valid email</mat-error>
           </mat-form-field>
 
           <div class="hobbies"> 
             <p>Your hobbies</p>
-            <div class="hobbies-inner" formArrayName="hobbies">
-              <li  *ngFor="let hobbie of hobbies.controls; let i = index">
-                <input type="text" [formControlName]='i'>
+            <ul class="hobbies-inner" formArrayName="hobbies">
+              <li *ngFor="let item of hobbies.controls; let i = index" [formGroupName]="i" class="hobbies-li">
+                <!-- <input type="text" formControlName="hobbiesTitle"> -->
+                <!-- <input type="text" formControlName="hobbiesDuration"> -->
+                <mat-form-field class="example-form-field">
+                  <mat-label>Hobbies Title</mat-label>
+                  <input matInput type="text" formControlName="hobbiesTitle">
+                </mat-form-field>
+
+                <mat-form-field class="example-form-field">
+                  <mat-label>Hobbies Duration</mat-label>
+                  <input matInput type="text" formControlName="hobbiesDuration">
+                </mat-form-field>
               </li>
-              <!-- <input matInput type="text" required [formControlName]="index" class="hobbies-input"> -->
-              <!-- <input matInput type="text" required formControlName="hobbiesValue" class="hobbies-input"> -->
-            </div>
+            </ul>
+
+            <button mat-raised-button color="primary"  class="hobbies-btn" (click)="addHobbies()">Add new hobbies</button>
+         
           </div>
 
-
-
-
-
-          <!-- <mat-form-field>
-            <mat-label>Your hobbies</mat-label>
-            <input matInput type="text" required formControlName="userName" class="hobbies-input">
-            <input matInput type="text" required formControlName="userName" class="hobbies-input">
-          </mat-form-field> -->
-
-
-
-
-          <!-- <mat-form-field class="example-form-field"> -->
-            <!-- <mat-label>Your hobbies</mat-label> -->
-            <!-- <input matInput type="text" formControlName="userName" required> -->
-            <!-- <input matInput type="text" formControlName="userName" required> -->
-         <!-- </mat-form-field> -->
-
-          <!-- <div class="selected-framework">
-            <p *ngFor="let itemFrameork of resultVersion">
-              {{itemFrameork}}
-            </p>
-          </div> -->
-
-          <button type="submit" (click)="sendForm()">Отправить</button>
+          <button mat-raised-button color="primary" type="submit" (click)="sendForm()">Отправить</button>
           
-          
-          
-    
     </form>
-
 
 </div>
